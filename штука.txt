@@ -1,0 +1,100 @@
+void menu()
+{
+	
+}
+
+//главная программа
+int main()
+{
+	bool quit = false;
+	char c;
+	fstream f;
+	f.open("testfile.txt");
+	while (!quit)
+	{
+		menu();
+		cout << "Your choice is: ";
+		cin >> c;
+		cin.get();
+		switch (c)
+		{
+		case '0':
+			quit = true;
+			break;
+		case '1':
+			cout << "If you want to use _generate_ - press 1" << endl;
+			cout << "If you want the numbers to be generated randomly - press 2" << endl;
+			cout << endl;
+			cout << endl;
+			char c1;
+			cout << "Your choice is: ";
+			cin >> c1;
+			cin.get();
+			switch (c1)
+			{
+			case '1':
+				f = MyDeque<int>::FillFile("testfile.txt", 9, 15);
+				cout << "The file was filled with random numbers." << endl;
+				cout << endl;
+				cout << endl;
+				break;
+			case '2':
+				f = MyDeque<int>::FillFile2("testfile.txt", 9, 15);
+				cout << "The file was filled with random numbers." << endl;
+				cout << endl;
+				cout << endl;
+				break;
+			}
+			break;
+
+		case '2':
+			IntDQ.DQ = MyDeque<int>::FillContainer(f);
+			cout << "The queue was filled with the numbers from the file:" << endl;
+			IntDQ.Show();
+			cout << endl;
+			cout << endl;
+			break;
+
+		case '3':			
+			IntDQ.DQ = MyDeque<int>::modify(IntDQ.DQ);
+			cout << "The queue was modifyed:" << endl;
+			IntDQ.Show();
+			cout << endl;
+			cout << endl;
+			break;
+
+		case '4':			
+			IntDQ.DQ = MyDeque<int>::modify(IntDQ.DQ.begin() + 1, IntDQ.DQ.begin() + 3, IntDQ.DQ);
+			cout << "The queue was modifyed:" << endl;
+			IntDQ.Show();
+			cout << endl;
+			cout << endl;
+			break;
+
+		case '5':			
+			IntDQ.Func_transform();
+			cout << "The queue was modifyed:" << endl;
+			IntDQ.Show();
+			cout << endl;
+			cout << endl;
+			break;
+
+		case '6':			
+			IntDQ.Foreach();
+			cout << "The queue was modifyed:" << endl;
+			IntDQ.Show();
+			cout << endl;
+			cout << endl;
+			break;
+
+		case '7':
+			IntDQ.Clear();
+			cout << "The queue is clear now" << endl;
+			cout << endl;
+			cout << endl;
+			break;
+		default:
+			cout << "Warning: you entered the number which is out of [0 ; 9] range. Try again." << endl;
+		}
+	}
+}
