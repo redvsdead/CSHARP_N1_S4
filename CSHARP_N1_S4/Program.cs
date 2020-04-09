@@ -51,12 +51,12 @@ namespace CSHARP_N1_S4
                 }
 
             }*/
-            hashItem item = new hashItem();
+            /*hashItem item = new hashItem();
             for (int i = 0; i < 3; ++i)
             {
                 item.setInfo();
                 hash.Add(item);
-            }
+            }*/
 
             hash.Print();
             Console.WriteLine();
