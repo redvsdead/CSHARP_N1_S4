@@ -14,14 +14,17 @@ namespace CSHARP_N1_S4
     public class hashItem
     {
 
-        public Key number;  //ключ класса Key (таб. номер)
+        public Key number = new Key();  //ключ класса Key (таб. номер)
         public string NSP;  //фио
         public int payment; //з/п
 
         //сеттеры:
         public void setNumber(int _number)
         {
-            number = new Key(_number);
+            if (_number > 0)
+            {
+                number = new Key(_number);
+            }
         }
 
         public void setNSP(string _NSP)
@@ -31,7 +34,10 @@ namespace CSHARP_N1_S4
 
         public void setPayment(int _payment)
         {
-            payment = _payment;
+            if (_payment > 0)
+            {
+                payment = _payment;
+            }
         }
 
         //геттеры:
@@ -96,7 +102,7 @@ namespace CSHARP_N1_S4
                 int i = 1;
                 int j = 0;
                 //если они состоят из букв, то добавляем их в промежуточную add
-                while (ok && i < words.Length - 2 && j < words[i].Length)
+                while (ok && i < words.Length - 1 && j < words[i].Length)
                 {
                     ok = !(words[i][j] < 'A') && !(words[i][j] > 'Z') || !(words[i][j] < 'a') && !(words[i][j] > 'z');
                     add += words[i][j];
@@ -183,7 +189,7 @@ namespace CSHARP_N1_S4
                 table[hF] = new hashItem(); //выделяем память под ячейку и присваиваем ей переаваемый элемент:
                 table[hF].setInfo(_item);
                 ++count;
-                Console.WriteLine("User record was added successfully.");
+                //Console.WriteLine("User record was added successfully.");
             }
             //иначе оповещаем юзера о невозможности добавления
             else
@@ -217,6 +223,21 @@ namespace CSHARP_N1_S4
             }
         }
 
+        //очистка таблицы
+        public void Clear()
+        {
+            int i = 0;  //счетчик удаляемых данных
+            while (i < size && count > 0)   //пока не дошли до конца таблицы и не удалили все элементы
+            {
+                if (table[i] != null)   //если ячейка не пустая, удаляем данные
+                {
+                    table[i] = null;
+                    --count;
+                }
+            }
+            Console.WriteLine("The table is empty now");
+        }
+
         //проверка наличия элемента. был вариант возвращать элемент, но я решила передавать его как out аргумент
         public bool Search(int _key, out hashItem _item)
         {
@@ -235,11 +256,9 @@ namespace CSHARP_N1_S4
                         case true:
                             _item = new hashItem();
                             _item = table[hF];
-                            Console.WriteLine("User record has been found.");
                             return true;
                         default:
-                            _item = null;
-                            Console.WriteLine("Warning: Cannot find the user record.");
+                            _item = null;                            
                             return false;
                     }
                 }
@@ -263,7 +282,6 @@ namespace CSHARP_N1_S4
                     if (table[i] != null)   //если ячейка не пустая, выводим информацию
                     {
                         ++j;    //увеличение к-ва выведенных данных
-                        Console.Write(j + ". ");
                         line = table[i].getInfo();
                         Console.WriteLine(line);
                     }
@@ -272,19 +290,43 @@ namespace CSHARP_N1_S4
             }
         }
 
+        public void Task (int _number)
+        {
+            hashItem item;
+            if (_number < 1)
+            {
+                Console.WriteLine("Warning: the number must be positive");
+            }
+            else
+            {
+                item = new hashItem();
+                if (Search(_number, out item))
+                {
+                    Console.WriteLine(item.getInfo());
+                }
+                else
+                {
+                    Console.WriteLine("Warning: cannot find the user #" + _number);
+                }
+            }
+        }
+
 
         //загрузка из файла
         public void loadFrom()
         {
+            string line;
             hashItem item = new hashItem();
             try
             {
                 //каждую строку файла передаем в соответствующий метод set для строки
                 using (StreamReader sr = new StreamReader("TestFile.txt"))
                 {
-                    string line = sr.ReadToEnd();
-                    item.setInfo(line);
-                    Add(item);
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        item.setInfo(line);
+                        Add(item);
+                    }
                 }
             }
             catch (IOException e)

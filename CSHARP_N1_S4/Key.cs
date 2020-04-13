@@ -29,7 +29,6 @@ namespace CSHARP_N1_S4
 
         public int hashFunc1(int _size)  //1-я х. функция (сумма цифр), ненадежная функция
         {
-            Console.WriteLine("I am in hash1");
             int nKey = key;
             int nHash = 0;
             while (nKey > 0)
