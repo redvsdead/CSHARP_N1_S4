@@ -18,6 +18,7 @@ namespace CSHARP_N1_S4
             Console.WriteLine(" - fill the table from file - press 1");
             Console.WriteLine(" - fulfill the main task - press 2");
             Console.WriteLine(" - clear the table - press 3");
+            Console.WriteLine(" - remove one user record - press 4");
             Console.WriteLine(" - quit - press 0");
             Console.WriteLine();
             Console.WriteLine();
@@ -33,6 +34,7 @@ namespace CSHARP_N1_S4
             while (!quit)
             {
                 menu();
+                int code;
                 c = Console.ReadLine();
                 switch (c)
                 {
@@ -50,8 +52,7 @@ namespace CSHARP_N1_S4
                         Console.WriteLine();
                         if (full)
                         {
-                            Console.WriteLine("Please, enter the number.");
-                            int code;
+                            Console.WriteLine("Please, enter the number.");                            
                             if (int.TryParse(Console.ReadLine(), out code))
                             {
                                 hash.Task(code);
@@ -69,6 +70,17 @@ namespace CSHARP_N1_S4
                         full = false;
                         Console.WriteLine();
                         Console.WriteLine();
+                        break;
+                    case "4":
+                        Console.WriteLine("Please, enter the number.");                        
+                        hashItem item = new hashItem();
+                        if (int.TryParse(Console.ReadLine(), out code))
+                        {
+                            if (hash.Search(code, out item))
+                            {
+                                hash.Delete(item);
+                            }
+                        }
                         break;
                     default:
                         Console.WriteLine("Warning: cannot interpret command. Try again.");

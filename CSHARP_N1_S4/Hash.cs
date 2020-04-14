@@ -277,6 +277,7 @@ namespace CSHARP_N1_S4
                     table[i].setDeleted();
                     --count;
                 }
+                ++i;
             }
             Console.WriteLine("The table is empty now");
         }
