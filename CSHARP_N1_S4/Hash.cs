@@ -165,7 +165,7 @@ namespace CSHARP_N1_S4
     //класс хеш таблицы
     public class hashTable
     {
-        const int size = 100; //макс. размер табоицы
+        const int size = 1000; //макс. размер табоицы
         public hashItem[] table = new hashItem[size]; //таблица hashItem'ов
         public int count;   //к-во эл. в таблице
 
@@ -211,9 +211,9 @@ namespace CSHARP_N1_S4
             int hF = hashFunction1(key);
             if (!isFull()) //если таблица не полная, то пытаемся добавить
             {
-                if (table[hF].getStatus() == Status.engaged) //если по первому хешу уже что-то лежит, применяем второй
+                while (table[hF].getStatus() == Status.engaged && hF < size) //если по первому хешу уже что-то лежит, применяем второй, пока не дойдем до пустой ячейки или конца таблицы
                 {
-                    hF = hashFunction2(key);
+                    hF += hashFunction2(key);
                 }
                 if (table[hF].getStatus() != Status.engaged)    //если статуc ячейки == не занята или удалена, то добавляем элемент
                 {
@@ -238,10 +238,10 @@ namespace CSHARP_N1_S4
                 int hF = hashFunction1(key);
                 if (!isEmpty())
                 {
-                    //если первый хеш не подошел (ячейка пуста/не совпал номер), применяем второй
-                    if (table[hF].getStatus() != Status.engaged || table[hF].getNumber() != key)                      
+                    //если первый хеш не подошел (ячейка пуста/не совпал номер), применяем второй (пока не найдем нужную или конец таблицы)
+                    while ((table[hF].getStatus() != Status.engaged || table[hF].getNumber() != key) && hF < size)                      
                     { 
-                        hF = hashFunction2(key);
+                        hF += hashFunction2(key);
                     }
                     //если в ячейке что-то есть и таб. номера совпадают, то удаляем ее содержимое
                     if (table[hF].getStatus() == Status.engaged && table[hF].getNumber() == _item.getNumber())    
@@ -281,9 +281,9 @@ namespace CSHARP_N1_S4
             int hF = hashFunction1(_key);
             if (!isEmpty())
             {
-                if (table[hF].getStatus() != Status.engaged || table[hF].getNumber() != _key) //если первый хеш не подошел, применяем второй
+                while ((table[hF].getStatus() != Status.engaged || table[hF].getNumber() != _key) && hF < size) //если первый хеш не подошел, применяем второй
                 {
-                    hF = hashFunction2(_key);
+                    hF += hashFunction2(_key);
                 }
                 if (table[hF].getStatus() == Status.engaged) //если ячейка существует
                 {
