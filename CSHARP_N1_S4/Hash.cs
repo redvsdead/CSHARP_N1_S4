@@ -207,19 +207,25 @@ namespace CSHARP_N1_S4
         //добавление элемента
         public void Add(hashItem _item)
         {
+            bool ok = true;
             int key =_item.getNumber(); //запоминаем ключ (таб. номер)
             int hF = hashFunction1(key);
             if (!isFull()) //если таблица не полная, то пытаемся добавить
             {
-                while (table[hF].getStatus() == Status.engaged && hF < size) //если по первому хешу уже что-то лежит, применяем второй, пока не дойдем до пустой ячейки или конца таблицы
+                while (table[hF].getStatus() == Status.engaged && ok) //если по первому хешу уже что-то лежит, применяем второй, пока не дойдем до пустой ячейки или конца таблицы
                 {
-                    hF += hashFunction2(key);
+                    ok = table[hF].getNumber() != key;  //
+                    hF = (hF + hashFunction2(key)) % (size - 2);
                 }
-                if (table[hF].getStatus() != Status.engaged)    //если статуc ячейки == не занята или удалена, то добавляем элемент
+                if (table[hF].getStatus() != Status.engaged && ok)    //если статуc ячейки == не занята или удалена, то добавляем элемент
                 {
                     table[hF].setEngaged();
                     table[hF].setInfo(_item);
                     ++count;
+                }
+                else
+                {
+                    Console.WriteLine("Warning: user numbers can not be equal.");
                 }
             }
             //иначе оповещаем юзера о невозможности добавления
@@ -239,9 +245,9 @@ namespace CSHARP_N1_S4
                 if (!isEmpty())
                 {
                     //если первый хеш не подошел (ячейка пуста/не совпал номер), применяем второй (пока не найдем нужную или конец таблицы)
-                    while ((table[hF].getStatus() != Status.engaged || table[hF].getNumber() != key) && hF < size)                      
-                    { 
-                        hF += hashFunction2(key);
+                    while (table[hF].getStatus() != Status.engaged || table[hF].getNumber() != key)                      
+                    {
+                        hF = (hF + hashFunction2(key)) % (size - 2);
                     }
                     //если в ячейке что-то есть и таб. номера совпадают, то удаляем ее содержимое
                     if (table[hF].getStatus() == Status.engaged && table[hF].getNumber() == _item.getNumber())    
@@ -279,13 +285,15 @@ namespace CSHARP_N1_S4
         public bool Search(int _key, out hashItem _item)
         {
             int hF = hashFunction1(_key);
+            int count = 1;  //счетчик ячеек, которые посетили. тк hF делят на size-2, то повторяться ячейки не будут
             if (!isEmpty())
             {
-                while ((table[hF].getStatus() != Status.engaged || table[hF].getNumber() != _key) && hF < size) //если первый хеш не подошел, применяем второй
+                while ((table[hF].getStatus() != Status.engaged || table[hF].getNumber() != _key) && count < size) //если первый хеш не подошел, применяем второй
                 {
-                    hF += hashFunction2(_key);
+                    hF = (hF + hashFunction2(_key))%(size-2);
+                    ++count;    //увеличиваем count, чтобы отследить момент, когда все ячейки будут посещены, если по введенному номеру нет элемента
                 }
-                if (table[hF].getStatus() == Status.engaged) //если ячейка существует
+                if (table[hF].getStatus() == Status.engaged) //если ячейка, на которой остановились, заполнена
                 {
                     //проверяем соответствие табельных номеров
                     switch (table[hF].getNumber() == _key)
