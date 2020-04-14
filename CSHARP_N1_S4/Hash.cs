@@ -9,16 +9,34 @@ using System.Threading.Tasks;
 
 namespace CSHARP_N1_S4
 {
+    public enum Status {engaged, unengaged, deleted};   //список статусов ячейки: занята, не занята, удалена
 
     //класс элемента 
     public class hashItem
     {
-
+        public Status status;
         public Key number = new Key();  //ключ класса Key (таб. номер)
         public string NSP;  //фио
         public int payment; //з/п
 
+
+        //при инстантинации ставим статус "не занято"
+        public hashItem()
+        {
+            status = Status.unengaged;
+        }
+
         //сеттеры:
+        public void setEngaged()
+        {
+            status = Status.engaged;
+        }
+
+        public void setDeleted()
+        {
+            status = Status.deleted;
+        }
+
         public void setNumber(int _number)
         {
             if (_number > 0)
@@ -41,6 +59,10 @@ namespace CSHARP_N1_S4
         }
 
         //геттеры:
+        public Status getStatus()
+        {
+            return status;
+        }
         public int getNumber()
         {
             return number.getKey();
@@ -66,6 +88,7 @@ namespace CSHARP_N1_S4
         //заполнение элемента в консоли
         public void setInfo()
         {
+            setEngaged();    //устанавливаем статус занятой ячейки
             int n = 0;
             Console.WriteLine("Add personnel number:");
             n = Convert.ToInt32(Console.ReadLine());
@@ -81,6 +104,7 @@ namespace CSHARP_N1_S4
         //перегрузка, копирование другого hashItem'а
         public void setInfo(hashItem _item)
         {
+            setEngaged();
             setNumber(_item.getNumber());
             setNSP(_item.getNSP());
             setPayment(_item.getPayment());
@@ -89,6 +113,7 @@ namespace CSHARP_N1_S4
         //перегрузка для чтения информации построчно из файла, передается прочтенная строка
         public void setInfo(string _line)
         {
+            setEngaged();
             int num = 0;
             string nsp = "";
             int pay = 0;
@@ -147,7 +172,11 @@ namespace CSHARP_N1_S4
         //конструктор
         public hashTable()
         {
-            count = 0;
+            for (int i = 0; i < size; ++i)
+            {
+                table[i] = new hashItem();  //теперь все ячейки считаются незанятыми
+            }
+            count = 0;  //число занятых == 0
         }
 
         //первая хеш функция
@@ -182,14 +211,16 @@ namespace CSHARP_N1_S4
             int hF = hashFunction1(key);
             if (!isFull()) //если таблица не полная, то пытаемся добавить
             {
-                if (table[hF] != null) //если по первому хешу уже что-то лежит, применяем второй
+                if (table[hF].getStatus() == Status.engaged) //если по первому хешу уже что-то лежит, применяем второй
                 {
                     hF = hashFunction2(key);
                 }
-                table[hF] = new hashItem(); //выделяем память под ячейку и присваиваем ей переаваемый элемент:
-                table[hF].setInfo(_item);
-                ++count;
-                //Console.WriteLine("User record was added successfully.");
+                if (table[hF].getStatus() != Status.engaged)    //если статуc ячейки == не занята или удалена, то добавляем элемент
+                {
+                    table[hF].setEngaged();
+                    table[hF].setInfo(_item);
+                    ++count;
+                }
             }
             //иначе оповещаем юзера о невозможности добавления
             else
@@ -207,13 +238,19 @@ namespace CSHARP_N1_S4
                 int hF = hashFunction1(key);
                 if (!isEmpty())
                 {
-                    if (table[hF] == null || table[hF].getNumber() != key)  //если первый хеш не подошел (ячейка пуста/не совпал номер), применяем второй
-                    {
+                    //если первый хеш не подошел (ячейка пуста/не совпал номер), применяем второй
+                    if (table[hF].getStatus() != Status.engaged || table[hF].getNumber() != key)                      
+                    { 
                         hF = hashFunction2(key);
                     }
-                    table[hF] = null;  //уничтожаем ячейку
-                    --count;
-                    Console.WriteLine("User record was removed successfully.");
+                    //если в ячейке что-то есть и таб. номера совпадают, то удаляем ее содержимое
+                    if (table[hF].getStatus() == Status.engaged && table[hF].getNumber() == _item.getNumber())    
+                    {
+                        table[hF].setDeleted();  //меняем статус на "удалена"
+                        //table[hF] = null;  //уничтожаем ячейку
+                        --count;
+                        Console.WriteLine("User record was removed successfully.");
+                    }
                 }
                 //иначе выводим предупреждение
                 else
@@ -229,9 +266,9 @@ namespace CSHARP_N1_S4
             int i = 0;  //счетчик удаляемых данных
             while (i < size && count > 0)   //пока не дошли до конца таблицы и не удалили все элементы
             {
-                if (table[i] != null)   //если ячейка не пустая, удаляем данные
+                if (table[i].getStatus() == Status.engaged)   //если ячейка не пустая, удаляем данные
                 {
-                    table[i] = null;
+                    table[i].setDeleted();
                     --count;
                 }
             }
@@ -244,23 +281,28 @@ namespace CSHARP_N1_S4
             int hF = hashFunction1(_key);
             if (!isEmpty())
             {
-                if (table[hF] == null || table[hF].getNumber() != _key) //если первый хеш не подошел, применяем второй
+                if (table[hF].getStatus() != Status.engaged || table[hF].getNumber() != _key) //если первый хеш не подошел, применяем второй
                 {
                     hF = hashFunction2(_key);
                 }
-                if (table[hF] != null) //если ячейка существует
+                if (table[hF].getStatus() == Status.engaged) //если ячейка существует
                 {
                     //проверяем соответствие табельных номеров
                     switch (table[hF].getNumber() == _key)
                     {
                         case true:
-                            _item = new hashItem();
+                            _item = new hashItem();                            
                             _item = table[hF];
                             return true;
                         default:
                             _item = null;                            
                             return false;
-                    }
+                    };
+                }
+                else
+                {
+                    _item = null;
+                    return false;
                 }
             }
             _item = null;
@@ -279,7 +321,7 @@ namespace CSHARP_N1_S4
                 int j = 0;  //счетчик выведенных данных
                 while (i < size && j < count)   //пока не дошли до конца таблицы и не вывели все элементы (т е счетчик j < count)
                 {
-                    if (table[i] != null)   //если ячейка не пустая, выводим информацию
+                    if (table[i].getStatus() == Status.engaged)   //если ячейка не пустая, выводим информацию
                     {
                         ++j;    //увеличение к-ва выведенных данных
                         line = table[i].getInfo();
