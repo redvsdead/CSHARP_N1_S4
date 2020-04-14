@@ -286,28 +286,23 @@ namespace CSHARP_N1_S4
         public bool Search(int _key, out hashItem _item)
         {
             int hF = hashFunction1(_key);
-            int count = 1;  //счетчик ячеек, которые посетили. тк hF делят на size-2, то повторяться ячейки не будут
             if (!isEmpty())
             {
-                while ((table[hF].getStatus() != Status.engaged || table[hF].getNumber() != _key) && count < size) //если первый хеш не подошел, применяем второй
+                //как только ячейка станет unengaged, это будет означать, что дальше нужной ячейки точно не будет (больше нет коллизий)
+                //поэтому пока ячейка заполнена и не подходит ИЛИ удалена, применяем хеш функцию
+                while ((table[hF].getStatus() == Status.engaged && table[hF].getNumber() != _key) || 
+                    (table[hF].getStatus() == Status.deleted)) //если первый хеш не подошел, применяем второй
                 {
                     hF = (hF + hashFunction2(_key))%(size-2);
-                    ++count;    //увеличиваем count, чтобы отследить момент, когда все ячейки будут посещены, если по введенному номеру нет элемента
                 }
-                if (table[hF].getStatus() == Status.engaged) //если ячейка, на которой остановились, заполнена
+                //в итоге мы остановимся либо на заполненной ячейке с подходящим ключом, либо на unengaged
+                if (table[hF].getStatus() == Status.engaged) //если ячейка, на которой остановились, заполнена, то в ней точно нужный ключ
                 {
-                    //проверяем соответствие табельных номеров
-                    switch (table[hF].getNumber() == _key)
-                    {
-                        case true:
-                            _item = new hashItem();                            
-                            _item = table[hF];
-                            return true;
-                        default:
-                            _item = null;                            
-                            return false;
-                    };
+                    _item = new hashItem();
+                    _item = table[hF];
+                    return true;
                 }
+                //иначе она unengaged, те элемента с таким ключом не существует
                 else
                 {
                     _item = null;
