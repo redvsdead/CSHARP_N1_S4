@@ -244,19 +244,15 @@ namespace CSHARP_N1_S4
                 int hF = hashFunction1(key);
                 if (!isEmpty())
                 {
-                    //если первый хеш не подошел (ячейка пуста/не совпал номер), применяем второй (пока не найдем нужную или конец таблицы)
+                    //если первый хеш не подошел (ячейка пуста/не совпал номер), применяем второй (пока не найдем нужную)
                     while (table[hF].getStatus() != Status.engaged || table[hF].getNumber() != key)                      
                     {
                         hF = (hF + hashFunction2(key)) % (size - 1);
                     }
-                    //если в ячейке что-то есть и таб. номера совпадают, то удаляем ее содержимое
-                    if (table[hF].getStatus() == Status.engaged && table[hF].getNumber() == _item.getNumber())    
-                    {
-                        table[hF].setDeleted();  //меняем статус на "удалена"
-                        //table[hF] = null;  //уничтожаем ячейку
-                        --count;
-                        Console.WriteLine("User record was removed successfully.");
-                    }
+                    //элемент точно найден, тк в самом начале метода проверка на его существование в таблице (если бы его не было, в этот цикл не вошли бы)
+                    table[hF].setDeleted();  //меняем статус на "удалена"
+                    --count;
+                    Console.WriteLine("User record was removed successfully.");
                 }
                 //иначе выводим предупреждение
                 else
@@ -264,7 +260,10 @@ namespace CSHARP_N1_S4
                     Console.WriteLine("Warning: unable to remove user record. The table is empty.");
                 }
             }
-            Console.WriteLine("Warning: user with number #" + _item.getNumber() + " does not exist");
+            else
+            {
+                Console.WriteLine("Warning: user with number #" + _item.getNumber() + " does not exist");
+            }
         }
 
         //очистка таблицы
