@@ -76,14 +76,7 @@ namespace CSHARP_N1_S4
                         hashItem item = new hashItem();
                         if (int.TryParse(Console.ReadLine(), out code))
                         {
-                            if (hash.Search(code, out item))
-                            {
-                                hash.Delete(item);
-                            }
-                            else
-                            {
-                                Console.WriteLine("Warning: user number #" + code + " does not exist");
-                            }
+                            hash.Delete(code);
                         }
                         break;
                     default:

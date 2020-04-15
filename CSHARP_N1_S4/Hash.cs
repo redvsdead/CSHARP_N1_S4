@@ -236,11 +236,11 @@ namespace CSHARP_N1_S4
         }
 
         //удаление элемента
-        public void Delete(hashItem _item)
+        public void Delete(int key)
         {
-            if (Search(_item.getNumber(), out _item)) //если такой элемент в таблице существует, то применяем первый хеш
+            hashItem _item = new hashItem();
+            if (Search(key, out _item)) //если такой элемент в таблице существует, то применяем первый хеш
             {
-                int key = _item.getNumber();
                 int hF = hashFunction1(key);
                 if (!isEmpty())
                 {
@@ -263,7 +263,7 @@ namespace CSHARP_N1_S4
             }
             else
             {
-                Console.WriteLine("Warning: user with number #" + _item.getNumber() + " does not exist");
+                Console.WriteLine("Warning: user with number #" + key + " does not exist");
             }
         }
 
