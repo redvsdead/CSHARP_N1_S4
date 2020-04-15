@@ -215,7 +215,7 @@ namespace CSHARP_N1_S4
                 while (table[hF].getStatus() == Status.engaged && ok) //если по первому хешу уже что-то лежит, применяем второй, пока не дойдем до пустой ячейки или конца таблицы
                 {
                     ok = table[hF].getNumber() != key;  //
-                    hF = (hF + hashFunction2(key)) % (size - 1);
+                    hF = (hF + hashFunction2(key)) % size;
                 }
                 if (table[hF].getStatus() != Status.engaged && ok)    //если статуc ячейки == не занята или удалена, то добавляем элемент
                 {
@@ -247,7 +247,7 @@ namespace CSHARP_N1_S4
                     //если первый хеш не подошел (ячейка пуста/не совпал номер), применяем второй (пока не найдем нужную)
                     while (table[hF].getStatus() != Status.engaged || table[hF].getNumber() != key)                      
                     {
-                        hF = (hF + hashFunction2(key)) % (size - 1);
+                        hF = (hF + hashFunction2(key)) % size;
                     }
                     //элемент точно найден, тк в самом начале метода проверка на его существование в таблице (если бы его не было, в этот цикл не вошли бы)
                     table[hF].setDeleted();  //меняем статус на "удалена"
@@ -293,7 +293,7 @@ namespace CSHARP_N1_S4
                 while ((table[hF].getStatus() == Status.engaged && table[hF].getNumber() != _key) || 
                     (table[hF].getStatus() == Status.deleted)) //если первый хеш не подошел, применяем второй
                 {
-                    hF = (hF + hashFunction2(_key))%(size-1);
+                    hF = (hF + hashFunction2(_key)) % size;
                 }
                 //в итоге мы остановимся либо на заполненной ячейке с подходящим ключом, либо на unengaged
                 if (table[hF].getStatus() == Status.engaged) //если ячейка, на которой остановились, заполнена, то в ней точно нужный ключ
