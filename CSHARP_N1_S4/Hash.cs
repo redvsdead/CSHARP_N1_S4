@@ -215,7 +215,7 @@ namespace CSHARP_N1_S4
                 while (table[hF].getStatus() == Status.engaged && ok) //если по первому хешу уже что-то лежит, применяем второй, пока не дойдем до пустой ячейки или конца таблицы
                 {
                     ok = table[hF].getNumber() != key;  //
-                    hF = (hF + hashFunction2(key)) % (size - 2);
+                    hF = (hF + hashFunction2(key)) % (size - 1);
                 }
                 if (table[hF].getStatus() != Status.engaged && ok)    //если статуc ячейки == не занята или удалена, то добавляем элемент
                 {
@@ -247,7 +247,7 @@ namespace CSHARP_N1_S4
                     //если первый хеш не подошел (ячейка пуста/не совпал номер), применяем второй (пока не найдем нужную или конец таблицы)
                     while (table[hF].getStatus() != Status.engaged || table[hF].getNumber() != key)                      
                     {
-                        hF = (hF + hashFunction2(key)) % (size - 2);
+                        hF = (hF + hashFunction2(key)) % (size - 1);
                     }
                     //если в ячейке что-то есть и таб. номера совпадают, то удаляем ее содержимое
                     if (table[hF].getStatus() == Status.engaged && table[hF].getNumber() == _item.getNumber())    
@@ -293,7 +293,7 @@ namespace CSHARP_N1_S4
                 while ((table[hF].getStatus() == Status.engaged && table[hF].getNumber() != _key) || 
                     (table[hF].getStatus() == Status.deleted)) //если первый хеш не подошел, применяем второй
                 {
-                    hF = (hF + hashFunction2(_key))%(size-2);
+                    hF = (hF + hashFunction2(_key))%(size-1);
                 }
                 //в итоге мы остановимся либо на заполненной ячейке с подходящим ключом, либо на unengaged
                 if (table[hF].getStatus() == Status.engaged) //если ячейка, на которой остановились, заполнена, то в ней точно нужный ключ
@@ -302,7 +302,7 @@ namespace CSHARP_N1_S4
                     _item = table[hF];
                     return true;
                 }
-                //иначе она unengaged, те элемента с таким ключом не существует
+                //иначе она unengaged, т е элемента с таким ключом не существует
                 else
                 {
                     _item = null;
