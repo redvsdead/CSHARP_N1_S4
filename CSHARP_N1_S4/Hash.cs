@@ -264,6 +264,7 @@ namespace CSHARP_N1_S4
                     Console.WriteLine("Warning: unable to remove user record. The table is empty.");
                 }
             }
+            Console.WriteLine("Warning: user with number #" + _item.getNumber() + " does not exist");
         }
 
         //очистка таблицы

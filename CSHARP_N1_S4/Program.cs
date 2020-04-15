@@ -80,6 +80,10 @@ namespace CSHARP_N1_S4
                             {
                                 hash.Delete(item);
                             }
+                            else
+                            {
+                                Console.WriteLine("Warning: user number #" + code + " does not exist");
+                            }
                         }
                         break;
                     default:
